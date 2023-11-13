@@ -3,6 +3,6 @@
 
 namespace Accurri.Models;
 
-public class HomepageModel
+public sealed class HomepageModel
 {
 }

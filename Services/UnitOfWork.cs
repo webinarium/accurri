@@ -21,12 +21,12 @@ public sealed class UnitOfWork : IUnitOfWork
         return _dbContext.Set<TEntity>();
     }
 
-    public TEntity? Find<TEntity>(object?[]? id) where TEntity : class
+    public TEntity? Find<TKey, TEntity>(TKey id) where TEntity : class
     {
         return _dbContext.Find<TEntity>(id);
     }
 
-    public async Task<TEntity?> FindAsync<TEntity>(object?[]? id, CancellationToken token = default)
+    public async Task<TEntity?> FindAsync<TKey, TEntity>(TKey id, CancellationToken token = default)
         where TEntity : class
     {
         return await _dbContext.FindAsync<TEntity>(id, token);
