@@ -4,6 +4,8 @@
 using Accurri.Dal;
 using Accurri.Services;
 
+using FluentMigrator.Runner;
+
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -11,10 +13,20 @@ var builder = WebApplication.CreateBuilder(args);
 // Add services to the container.
 builder.Services.AddControllersWithViews();
 
+var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
+
+builder.Services.AddFluentMigratorCore()
+    .ConfigureRunner(runnerBuilder => runnerBuilder
+        .AddPostgres()
+        .WithGlobalConnectionString(connectionString)
+        .ScanIn(typeof(AbstractMigration).Assembly).For.Migrations()
+        .ScanIn(typeof(VersionTableMetaData).Assembly).For.VersionTableMetaData()
+    )
+    .AddLogging(runnerBuilder => runnerBuilder.AddFluentMigratorConsole());
+
 builder.Services.AddDbContext<AccurriDbContext>(options =>
 {
-    var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
-    options.UseNpgsql(connectionString);
+    options.UseNpgsql($"{connectionString};Search Path=accurri");
 });
 
 builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
@@ -29,5 +41,12 @@ app.MapControllerRoute(
     name: "default",
     pattern: "{controller=Home}/{action=Index}/{id?}"
 );
+
+// Migrate the database.
+using (var scope = app.Services.CreateScope())
+{
+    var runner = scope.ServiceProvider.GetRequiredService<IMigrationRunner>();
+    runner.MigrateUp();
+}
 
 app.Run();
