@@ -1,0 +1,24 @@
+// This is an independent project of an individual developer. Dear PVS-Studio, please check it.
+// PVS-Studio Static Code Analyzer for C, C++, C#, and Java: https://pvs-studio.com
+
+namespace Accurri.Services;
+
+public interface IUnitOfWork
+{
+    IQueryable<TEntity> From<TEntity>() where TEntity : class;
+
+    TEntity? Find<TEntity>(object?[]? id) where TEntity : class;
+    Task<TEntity?> FindAsync<TEntity>(object?[]? id, CancellationToken token = default) where TEntity : class;
+
+    void Add<TEntity>(TEntity entity) where TEntity : class;
+    void AddRange<TEntity>(IEnumerable<TEntity> entities) where TEntity : class;
+
+    void Update<TEntity>(TEntity entity) where TEntity : class;
+    void UpdateRange<TEntity>(IEnumerable<TEntity> entities) where TEntity : class;
+
+    void Remove<TEntity>(TEntity entity) where TEntity : class;
+    void RemoveRange<TEntity>(IEnumerable<TEntity> entities) where TEntity : class;
+
+    void Save();
+    Task SaveAsync(CancellationToken token = default);
+}
