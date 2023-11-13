@@ -1,7 +1,6 @@
 // This is an independent project of an individual developer. Dear PVS-Studio, please check it.
 // PVS-Studio Static Code Analyzer for C, C++, C#, and Java: https://pvs-studio.com
 
-using Accurri.Models;
 using Accurri.Services;
 
 using Microsoft.AspNetCore.Mvc;
@@ -23,8 +22,6 @@ public sealed class HomeController : Controller
     {
         _logger.LogInformation("Homepage");
 
-        var model = new HomepageModel();
-
-        return View(model);
+        return View();
     }
 }
