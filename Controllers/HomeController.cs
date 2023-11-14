@@ -22,4 +22,20 @@ public sealed class HomeController : Controller
 
         return View();
     }
+
+    [Route("add")]
+    public IActionResult Add()
+    {
+        _logger.LogInformation("Add");
+
+        return View();
+    }
+
+    [Route("edit/{id:int}")]
+    public IActionResult Edit(int id)
+    {
+        _logger.LogInformation("Edit {id}", id);
+
+        return View(id);
+    }
 }

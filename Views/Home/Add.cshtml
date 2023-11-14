@@ -1,0 +1,33 @@
+<div id="app">
+    <label for="description">Description:</label>
+    <input type="text" id="description" v-model="description">
+    <hr>
+    <button @@click="onOk">OK</button>
+    <button @@click="onCancel">Cancel</button>
+</div>
+
+<script>
+    new Vue({
+        el: '#app',
+
+        data: {
+            description: null
+        },
+
+        methods: {
+            onOk() {
+                const data = {
+                    description: this.description
+                };
+
+                axios.post('/todo', data)
+                    .then(() => location.assign('/'))
+                    .catch((error) => console.log(error));
+            },
+
+            onCancel() {
+                location.assign('/');
+            }
+        }
+    });
+</script>

@@ -1,0 +1,53 @@
+@model int
+
+<div id="app">
+    <label for="description">Description:</label>
+    <input type="text" id="description" v-model="description">
+    <br>
+    <label for="complete">Complete:</label>
+    <input type="checkbox" id="complete" v-model="complete">
+    <hr>
+    <button @@click="onOk">OK</button>
+    <button @@click="onCancel">Cancel</button>
+</div>
+
+<script>
+    new Vue({
+        el: '#app',
+
+        data: {
+            description: null,
+            complete: false
+        },
+
+        computed: {
+            id: () => @Model
+        },
+
+        methods: {
+            onOk() {
+                const data = {
+                    description: this.description,
+                    complete: this.complete
+                };
+
+                axios.put(`/todo/${this.id}`, data)
+                    .then(() => location.assign('/'))
+                    .catch((error) => console.log(error));
+            },
+
+            onCancel() {
+                location.assign('/');
+            }
+        },
+
+        created() {
+            axios.get(`/todo/${this.id}`)
+                .then((response) => {
+                    this.description = response.data.description;
+                    this.complete = response.data.complete;
+                })
+                .catch((error) => console.log(error));
+        }
+    });
+</script>

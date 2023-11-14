@@ -1,0 +1,62 @@
+<div id="app">
+    <table>
+        <thead>
+        <tr>
+            <th></th>
+            <th>Description</th>
+            <th colspan="2"></th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr v-for="todo in todos">
+            <td>
+                <input type="checkbox" disabled :checked="todo.complete">
+            </td>
+            <td>{{ todo.description }}</td>
+            <td>
+                <button @@click="onEdit(todo.id)">Edit</button>
+            </td>
+            <td>
+                <button @@click="onDelete(todo.id)">Delete</button>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+    <button @@click="onAdd">Add</button>
+</div>
+
+<script>
+    new Vue({
+        el: '#app',
+
+        data: {
+            todos: []
+        },
+
+        methods: {
+            reload() {
+                axios.get('/todo')
+                    .then((response) => this.todos = response.data)
+                    .catch((error) => console.log(error));
+            },
+
+            onAdd() {
+                location.assign('/add');
+            },
+
+            onEdit(id) {
+                location.assign(`/edit/${id}`);
+            },
+
+            onDelete(id) {
+                axios.delete(`/todo/${id}`)
+                    .then(() => this.reload())
+                    .catch((error) => console.log(error));
+            }
+        },
+
+        created() {
+            this.reload();
+        }
+    });
+</script>
