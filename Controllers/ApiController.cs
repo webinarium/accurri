@@ -39,7 +39,7 @@ public sealed class ApiController : Controller
     {
         _logger.LogInformation("POST /todo");
 
-        ToDo todo = new ToDo
+        ToDo todo = new()
         {
             Description = model.Description,
             Complete = false
