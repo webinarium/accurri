@@ -9,7 +9,7 @@ namespace Accurri.Models;
 /// <summary>
 /// Request to update an item.
 /// </summary>
-public sealed class UpdateModel
+public sealed class UpdateTodoRequest
 {
     /// <summary>
     /// Item description.

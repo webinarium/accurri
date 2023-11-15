@@ -2,8 +2,15 @@
 // PVS-Studio Static Code Analyzer for C, C++, C#, and Java: https://pvs-studio.com
 
 using Accurri.Entities;
+using Accurri.Exceptions;
 using Accurri.Models;
-using Accurri.Services;
+using Accurri.UseCases.Todos.CreateTodo;
+using Accurri.UseCases.Todos.DeleteTodo;
+using Accurri.UseCases.Todos.GetTodo;
+using Accurri.UseCases.Todos.ListTodos;
+using Accurri.UseCases.Todos.UpdateTodo;
+
+using MediatR;
 
 using Microsoft.AspNetCore.Mvc;
 
@@ -17,15 +24,15 @@ namespace Accurri.Controllers;
 public sealed class ApiController : Controller
 {
     private readonly ILogger<ApiController> _logger;
-    private readonly IUnitOfWork _unitOfWork;
+    private readonly IMediator _mediator;
 
     /// <summary>
     /// Dependency injection.
     /// </summary>
-    public ApiController(ILogger<ApiController> logger, IUnitOfWork unitOfWork)
+    public ApiController(ILogger<ApiController> logger, IMediator mediator)
     {
         _logger = logger;
-        _unitOfWork = unitOfWork;
+        _mediator = mediator;
     }
 
     /// <summary>
@@ -33,13 +40,12 @@ public sealed class ApiController : Controller
     /// </summary>
     [HttpGet("", Name = "todo_list")]
     [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(ICollection<ToDo>))]
-    public IActionResult List()
+    public async Task<IActionResult> List()
     {
         _logger.LogInformation("GET /todo");
 
-        var todos = _unitOfWork.From<ToDo>().OrderBy(todo => todo.Id).ToList();
-
-        _logger.LogDebug("Found {count} todos", todos.Count);
+        var query = new ListTodosQuery();
+        var todos = await _mediator.Send(query);
 
         return Ok(todos);
     }
@@ -51,20 +57,15 @@ public sealed class ApiController : Controller
     [HttpPost("", Name = "todo_add")]
     [ProducesResponseType(StatusCodes.Status201Created, Type = typeof(ToDo))]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    public async Task<IActionResult> Add(AddModel model)
+    public async Task<IActionResult> Add(AddTodoRequest request)
     {
         _logger.LogInformation("POST /todo");
 
-        ToDo todo = new()
-        {
-            Description = model.Description,
-            Complete = false
-        };
+        var command = new CreateTodoCommand(
+            Description: request.Description
+        );
 
-        _unitOfWork.Add(todo);
-        await _unitOfWork.SaveAsync();
-
-        _logger.LogDebug("Created new todo with ID={id}", todo.Id);
+        var todo = await _mediator.Send(command);
 
         string? url = Url.Link("todo_get", new
         {
@@ -77,7 +78,6 @@ public sealed class ApiController : Controller
     /// <summary>
     /// Returns specified resource.
     /// </summary>
-    /// <param name="id"></param>
     [HttpGet("{id:int}", Name = "todo_get")]
     [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(ToDo))]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
@@ -85,77 +85,73 @@ public sealed class ApiController : Controller
     {
         _logger.LogInformation($"GET /todo/{id}");
 
-        ToDo? todo = await _unitOfWork.FindAsync<int, ToDo>(id);
-
-        if (todo == null)
+        try
         {
-            _logger.LogError("Todo with ID={id} not found", id);
+            var query = new GetTodoQuery(
+                Id: id
+            );
 
+            var todo = await _mediator.Send(query);
+
+            return Ok(todo);
+        }
+        catch (TodoNotFoundException)
+        {
             return NotFound();
         }
-
-        _logger.LogDebug("Retrieved todo with ID={id}", todo.Id);
-
-        return Ok(todo);
     }
 
     /// <summary>
     /// Updates specified resource.
     /// </summary>
-    /// <param name="id"></param>
-    /// <param name="model"></param>
     [HttpPut("{id:int}", Name = "todo_update")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
-    public async Task<IActionResult> Update(int id, UpdateModel model)
+    public async Task<IActionResult> Update(int id, UpdateTodoRequest request)
     {
         _logger.LogInformation($"PUT /todo/{id}");
 
-        ToDo? todo = await _unitOfWork.FindAsync<int, ToDo>(id);
-
-        if (todo == null)
+        try
         {
-            _logger.LogError("Todo with ID={id} not found", id);
+            var command = new UpdateTodoCommand(
+                Id: id,
+                Description: request.Description,
+                Complete: request.Complete
+            );
 
+            await _mediator.Send(command);
+
+            return Ok();
+        }
+        catch (TodoNotFoundException)
+        {
             return NotFound();
         }
-
-        todo.Description = model.Description;
-        todo.Complete = model.Complete;
-
-        _unitOfWork.Update(todo);
-        await _unitOfWork.SaveAsync();
-
-        _logger.LogDebug("Updated todo with ID={id}", todo.Id);
-
-        return Ok();
     }
 
     /// <summary>
     /// Deletes specified resource.
     /// </summary>
-    /// <param name="id"></param>
     [HttpDelete("{id:int}", Name = "todo_remove")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     public async Task<IActionResult> Remove(int id)
     {
         _logger.LogInformation($"DELETE /todo/{id}");
 
-        ToDo? todo = await _unitOfWork.FindAsync<int, ToDo>(id);
-
-        if (todo == null)
+        try
         {
-            _logger.LogError("Todo with ID={id} not found", id);
+            var command = new DeleteTodoCommand(
+                Id: id
+            );
+
+            await _mediator.Send(command);
 
             return Ok();
         }
-
-        _unitOfWork.Remove(todo);
-        await _unitOfWork.SaveAsync();
-
-        _logger.LogDebug("Todo with ID={id} deleted", todo.Id);
-
-        return Ok();
+        catch (TodoNotFoundException)
+        {
+            return Ok();
+        }
     }
 }

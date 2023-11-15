@@ -8,7 +8,7 @@ namespace Accurri.Models;
 /// <summary>
 /// Request to add an item.
 /// </summary>
-public sealed class AddModel
+public sealed class AddTodoRequest
 {
     /// <summary>
     /// Item description.
