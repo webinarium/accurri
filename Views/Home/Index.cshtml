@@ -25,38 +25,6 @@
     <button @@click="onAdd">Add</button>
 </div>
 
-<script>
-    new Vue({
-        el: '#app',
-
-        data: {
-            todos: []
-        },
-
-        methods: {
-            reload() {
-                axios.get('/todo')
-                    .then((response) => this.todos = response.data)
-                    .catch((error) => console.log(error));
-            },
-
-            onAdd() {
-                location.assign('/add');
-            },
-
-            onEdit(id) {
-                location.assign(`/edit/${id}`);
-            },
-
-            onDelete(id) {
-                axios.delete(`/todo/${id}`)
-                    .then(() => this.reload())
-                    .catch((error) => console.log(error));
-            }
-        },
-
-        created() {
-            this.reload();
-        }
-    });
-</script>
+<script src="/build/runtime.js"></script>
+<script src="/build/vendors-node_modules_vue_dist_vue_esm-bundler_js-node_modules_axios_lib_axios_js.js"></script>
+<script src="/build/home/index.js"></script>
