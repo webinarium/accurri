@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace Accurri.Controllers;
 
+[ApiExplorerSettings(IgnoreApi = true)]
 [Route("/")]
 public sealed class HomeController : Controller
 {

@@ -1,14 +1,25 @@
 // This is an independent project of an individual developer. Dear PVS-Studio, please check it.
 // PVS-Studio Static Code Analyzer for C, C++, C#, and Java: https://pvs-studio.com
 
+using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 
 namespace Accurri.Models;
 
-public sealed record UpdateModel(
+/// <summary>
+/// Request to update an item.
+/// </summary>
+public sealed class UpdateModel
+{
+    /// <summary>
+    /// Item description.
+    /// </summary>
     [Required]
-    string Description,
+    public string Description { get; init; } = null!;
 
-    [Required]
-    bool Complete
-);
+    /// <summary>
+    /// Whether the item is complete.
+    /// </summary>
+    [DefaultValue(false)]
+    public bool Complete { get; init; } = false;
+}

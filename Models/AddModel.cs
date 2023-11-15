@@ -5,7 +5,14 @@ using System.ComponentModel.DataAnnotations;
 
 namespace Accurri.Models;
 
-public sealed record AddModel(
+/// <summary>
+/// Request to add an item.
+/// </summary>
+public sealed class AddModel
+{
+    /// <summary>
+    /// Item description.
+    /// </summary>
     [Required]
-    string Description
-);
+    public string Description { get; init; } = null!;
+}
