@@ -7,7 +7,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Accurri.Dal;
 
-public sealed class AccurriDbContext : DbContext
+internal sealed class AccurriDbContext : DbContext
 {
     public AccurriDbContext(DbContextOptions<AccurriDbContext> options) : base(options)
     {

@@ -5,7 +5,7 @@ using Accurri.Dal;
 
 namespace Accurri.Services;
 
-public sealed class UnitOfWork : IUnitOfWork
+internal sealed class UnitOfWork : IUnitOfWork
 {
     private readonly ILogger<UnitOfWork> _logger;
     private readonly AccurriDbContext _dbContext;

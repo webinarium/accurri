@@ -16,13 +16,13 @@ namespace Accurri.Controllers;
 [Route("/todo")]
 public sealed class ApiController : Controller
 {
-    private readonly ILogger<HomeController> _logger;
+    private readonly ILogger<ApiController> _logger;
     private readonly IUnitOfWork _unitOfWork;
 
     /// <summary>
     /// Dependency injection.
     /// </summary>
-    public ApiController(ILogger<HomeController> logger, IUnitOfWork unitOfWork)
+    public ApiController(ILogger<ApiController> logger, IUnitOfWork unitOfWork)
     {
         _logger = logger;
         _unitOfWork = unitOfWork;

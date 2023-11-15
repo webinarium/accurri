@@ -7,14 +7,28 @@ using FluentMigrator.Infrastructure;
 
 namespace Accurri.Dal;
 
+/// <summary>
+/// Base class for database migrations.
+/// </summary>
 public abstract class AbstractMigration : IMigration
 {
+    /// <summary>
+    /// Returns SQL to migrate the database up.
+    /// </summary>
     protected abstract string GetUpSql(IServiceProvider services);
+
+    /// <summary>
+    /// Returns SQL to migrate the database down.
+    /// </summary>
     protected abstract string GetDownSql(IServiceProvider services);
 
+    /// <inheritdoc />
     public object ApplicationContext => null!;
+
+    /// <inheritdoc />
     public string ConnectionString => null!;
 
+    /// <inheritdoc />
     public void GetUpExpressions(IMigrationContext context)
     {
         if (!context.QuerySchema.SchemaExists("accurri"))
@@ -36,6 +50,7 @@ public abstract class AbstractMigration : IMigration
         });
     }
 
+    /// <inheritdoc />
     public void GetDownExpressions(IMigrationContext context)
     {
         context.Expressions.Add(new ExecuteSqlStatementExpression
