@@ -43,6 +43,7 @@ var app = builder.Build();
 app.UseStaticFiles();
 app.UseRouting();
 app.UseStopwatchMiddleware();
+app.UseTransactionMiddleware();
 
 if (app.Environment.IsDevelopment())
 {

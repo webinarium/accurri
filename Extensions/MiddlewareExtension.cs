@@ -11,4 +11,9 @@ internal static class MiddlewareExtension
     {
         return builder.UseMiddleware<StopwatchMiddleware>();
     }
+
+    public static IApplicationBuilder UseTransactionMiddleware(this IApplicationBuilder builder)
+    {
+        return builder.UseMiddleware<TransactionMiddleware>();
+    }
 }
