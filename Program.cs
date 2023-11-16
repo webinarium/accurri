@@ -3,13 +3,10 @@
 
 using System.Reflection;
 
-using Accurri.Dal;
 using Accurri.Extensions;
 using Accurri.Services;
 
 using FluentMigrator.Runner;
-
-using Microsoft.EntityFrameworkCore;
 
 const string apiTitle = "Accurri API";
 const string apiVersion = "v1";
@@ -19,6 +16,7 @@ var builder = WebApplication.CreateBuilder(args);
 // Add services to the container.
 builder.Services.AddControllersWithViews();
 builder.Services.AddEndpointsApiExplorer();
+
 builder.Services.AddSwaggerGen(options =>
 {
     options.SwaggerDoc(apiVersion, new()
@@ -31,22 +29,7 @@ builder.Services.AddSwaggerGen(options =>
     options.IncludeXmlComments(Path.Combine(AppContext.BaseDirectory, xmlFilename));
 });
 
-var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
-
-builder.Services.AddFluentMigratorCore()
-    .ConfigureRunner(runnerBuilder => runnerBuilder
-        .AddPostgres()
-        .WithGlobalConnectionString(connectionString)
-        .ScanIn(typeof(AbstractMigration).Assembly).For.Migrations()
-        .ScanIn(typeof(VersionTableMetaData).Assembly).For.VersionTableMetaData()
-    )
-    .AddLogging(runnerBuilder => runnerBuilder.AddFluentMigratorConsole());
-
-builder.Services.AddDbContext<AccurriDbContext>(options =>
-{
-    options.UseNpgsql($"{connectionString};Search Path=accurri");
-});
-
+builder.Services.AddDatabase(builder.Configuration);
 builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
 
 builder.Services.AddMediatR(configuration =>
