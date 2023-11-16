@@ -4,6 +4,7 @@
 using System.Reflection;
 
 using Accurri.Dal;
+using Accurri.Extensions;
 using Accurri.Services;
 
 using FluentMigrator.Runner;
@@ -58,6 +59,7 @@ var app = builder.Build();
 // Configure the HTTP request pipeline.
 app.UseStaticFiles();
 app.UseRouting();
+app.UseStopwatchMiddleware();
 
 if (app.Environment.IsDevelopment())
 {
