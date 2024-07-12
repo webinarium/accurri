@@ -1,5 +1,7 @@
 namespace Accurri.Services;
 
+#pragma warning disable CS1591
+
 public interface IUnitOfWork
 {
     IQueryable<TEntity> From<TEntity>() where TEntity : class;

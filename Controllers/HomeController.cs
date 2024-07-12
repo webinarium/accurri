@@ -2,21 +2,18 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace Accurri.Controllers;
 
+#pragma warning disable CS1591
+
 [ApiExplorerSettings(IgnoreApi = true)]
 [Route("/")]
-public sealed class HomeController : Controller
+public sealed class HomeController(
+    ILogger<HomeController> logger
+) : Controller
 {
-    private readonly ILogger<HomeController> _logger;
-
-    public HomeController(ILogger<HomeController> logger)
-    {
-        _logger = logger;
-    }
-
     [Route("")]
     public IActionResult Index()
     {
-        _logger.LogInformation("Homepage");
+        logger.LogInformation("Homepage");
 
         return View();
     }
@@ -24,7 +21,7 @@ public sealed class HomeController : Controller
     [Route("add")]
     public IActionResult Add()
     {
-        _logger.LogInformation("Add");
+        logger.LogInformation("Add");
 
         return View();
     }
@@ -32,7 +29,7 @@ public sealed class HomeController : Controller
     [Route("edit/{id:int}")]
     public IActionResult Edit(int id)
     {
-        _logger.LogInformation("Edit {id}", id);
+        logger.LogInformation("Edit {id}", id);
 
         return View(id);
     }

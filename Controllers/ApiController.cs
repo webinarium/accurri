@@ -18,20 +18,11 @@ namespace Accurri.Controllers;
 /// </summary>
 [ApiController]
 [Route("/todo")]
-public sealed class ApiController : Controller
+public sealed class ApiController(
+    ILogger<ApiController> logger,
+    IMediator mediator
+) : Controller
 {
-    private readonly ILogger<ApiController> _logger;
-    private readonly IMediator _mediator;
-
-    /// <summary>
-    /// Dependency injection.
-    /// </summary>
-    public ApiController(ILogger<ApiController> logger, IMediator mediator)
-    {
-        _logger = logger;
-        _mediator = mediator;
-    }
-
     /// <summary>
     /// Returns list of existing resources.
     /// </summary>
@@ -39,10 +30,10 @@ public sealed class ApiController : Controller
     [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(ICollection<ToDo>))]
     public async Task<IActionResult> List()
     {
-        _logger.LogInformation("GET /todo");
+        logger.LogInformation("GET /todo");
 
         var query = new ListTodosQuery();
-        var todos = await _mediator.Send(query);
+        var todos = await mediator.Send(query);
 
         return Ok(todos);
     }
@@ -56,13 +47,13 @@ public sealed class ApiController : Controller
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     public async Task<IActionResult> Add(AddTodoRequest request)
     {
-        _logger.LogInformation("POST /todo");
+        logger.LogInformation("POST /todo");
 
         var command = new CreateTodoCommand(
             Description: request.Description
         );
 
-        var todo = await _mediator.Send(command);
+        var todo = await mediator.Send(command);
 
         string? url = Url.Link("todo_get", new
         {
@@ -80,7 +71,7 @@ public sealed class ApiController : Controller
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<IActionResult> Get(int id)
     {
-        _logger.LogInformation($"GET /todo/{id}");
+        logger.LogInformation($"GET /todo/{id}");
 
         try
         {
@@ -88,7 +79,7 @@ public sealed class ApiController : Controller
                 Id: id
             );
 
-            var todo = await _mediator.Send(query);
+            var todo = await mediator.Send(query);
 
             return Ok(todo);
         }
@@ -107,7 +98,7 @@ public sealed class ApiController : Controller
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<IActionResult> Update(int id, UpdateTodoRequest request)
     {
-        _logger.LogInformation($"PUT /todo/{id}");
+        logger.LogInformation($"PUT /todo/{id}");
 
         try
         {
@@ -117,7 +108,7 @@ public sealed class ApiController : Controller
                 Complete: request.Complete
             );
 
-            await _mediator.Send(command);
+            await mediator.Send(command);
 
             return Ok();
         }
@@ -134,7 +125,7 @@ public sealed class ApiController : Controller
     [ProducesResponseType(StatusCodes.Status200OK)]
     public async Task<IActionResult> Remove(int id)
     {
-        _logger.LogInformation($"DELETE /todo/{id}");
+        logger.LogInformation($"DELETE /todo/{id}");
 
         try
         {
@@ -142,7 +133,7 @@ public sealed class ApiController : Controller
                 Id: id
             );
 
-            await _mediator.Send(command);
+            await mediator.Send(command);
 
             return Ok();
         }
