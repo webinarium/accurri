@@ -2,10 +2,7 @@ using Accurri.Dal;
 
 namespace Accurri.Services;
 
-internal sealed class UnitOfWork(
-    ILogger<UnitOfWork> logger,
-    AccurriDbContext dbContext
-) : IUnitOfWork
+internal sealed class UnitOfWork(ILogger<UnitOfWork> logger, AccurriDbContext dbContext) : IUnitOfWork
 {
     public IQueryable<TEntity> From<TEntity>() where TEntity : class
     {

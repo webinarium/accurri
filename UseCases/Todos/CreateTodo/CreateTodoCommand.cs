@@ -1,5 +1,4 @@
 using Accurri.Entities;
-
 using MediatR;
 
 namespace Accurri.UseCases.Todos.CreateTodo;

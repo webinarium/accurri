@@ -1,5 +1,4 @@
 using Accurri.Dal;
-
 using FluentMigrator;
 using FluentMigrator.Expressions;
 using FluentMigrator.Infrastructure;

@@ -6,9 +6,7 @@ namespace Accurri.Controllers;
 
 [ApiExplorerSettings(IgnoreApi = true)]
 [Route("/")]
-public sealed class HomeController(
-    ILogger<HomeController> logger
-) : Controller
+public sealed class HomeController(ILogger<HomeController> logger) : Controller
 {
     [Route("")]
     public IActionResult Index()

@@ -6,9 +6,7 @@ using Accurri.UseCases.Todos.DeleteTodo;
 using Accurri.UseCases.Todos.GetTodo;
 using Accurri.UseCases.Todos.ListTodos;
 using Accurri.UseCases.Todos.UpdateTodo;
-
 using MediatR;
-
 using Microsoft.AspNetCore.Mvc;
 
 namespace Accurri.Controllers;
@@ -18,10 +16,7 @@ namespace Accurri.Controllers;
 /// </summary>
 [ApiController]
 [Route("/todo")]
-public sealed class ApiController(
-    ILogger<ApiController> logger,
-    IMediator mediator
-) : Controller
+public sealed class ApiController(ILogger<ApiController> logger, IMediator mediator) : Controller
 {
     /// <summary>
     /// Returns list of existing resources.

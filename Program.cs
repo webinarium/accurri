@@ -1,5 +1,3 @@
-using System.Reflection;
-
 using Accurri.Extensions;
 using Accurri.Services;
 
@@ -14,18 +12,7 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddControllersWithViews();
 builder.Services.AddEndpointsApiExplorer();
 
-builder.Services.AddSwaggerGen(options =>
-{
-    options.SwaggerDoc(apiVersion, new()
-    {
-        Title = apiTitle,
-        Version = apiVersion
-    });
-
-    var xmlFilename = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
-    options.IncludeXmlComments(Path.Combine(AppContext.BaseDirectory, xmlFilename));
-});
-
+builder.Services.AddSwagger();
 builder.Services.AddDatabase(builder.Configuration);
 builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
 

@@ -2,21 +2,14 @@ using System.Diagnostics;
 
 namespace Accurri.Middlewares;
 
-internal sealed class StopwatchMiddleware
+internal sealed class StopwatchMiddleware(RequestDelegate next)
 {
-    private readonly RequestDelegate _next;
-
-    public StopwatchMiddleware(RequestDelegate next)
-    {
-        _next = next;
-    }
-
     public async Task InvokeAsync(HttpContext context, ILogger<StopwatchMiddleware> logger)
     {
         var sw = new Stopwatch();
 
         sw.Start();
-        await _next(context);
+        await next(context);
         sw.Stop();
 
         logger.LogInformation("[{method} {path}] processing time {elapsed}",

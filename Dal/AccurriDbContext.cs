@@ -1,14 +1,9 @@
 using Accurri.Entities;
-
 using Microsoft.EntityFrameworkCore;
 
 namespace Accurri.Dal;
 
-internal sealed class AccurriDbContext : DbContext
+internal sealed class AccurriDbContext(DbContextOptions<AccurriDbContext> options) : DbContext(options)
 {
-    public AccurriDbContext(DbContextOptions<AccurriDbContext> options) : base(options)
-    {
-    }
-
-    public required DbSet<ToDo> ToDos { get; set; }
+    public required DbSet<ToDo> ToDos { get; init; }
 }
